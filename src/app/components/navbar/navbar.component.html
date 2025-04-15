@@ -1,0 +1,281 @@
+<div class="flex h-screen">
+  <!-- Mobile Toggle Button -->
+  <button
+    (click)="toggleSidebar()"
+    class="md:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded shadow"
+  >
+    <svg
+      *ngIf="!isSidebarOpen"
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6 text-[#590202]"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M4 6h16M4 12h16M4 18h16"
+      />
+    </svg>
+    <svg
+      *ngIf="isSidebarOpen"
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6 text-[#590202]"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M6 18L18 6M6 6l12 12"
+      />
+    </svg>
+  </button>
+
+  <!-- Sidebar with Gradient Background -->
+  <aside
+    [ngClass]="{
+      '-translate-x-full': !isSidebarOpen,
+      'translate-x-0': isSidebarOpen
+    }"
+    style="background-image: linear-gradient(152deg, #590202 0%, #a61103 100%)"
+    class="fixed inset-y-0 left-0 transform transition duration-300 ease-in-out w-64 shadow-lg z-40 md:relative md:translate-x-0"
+  >
+    <div class="p-4">
+      <!-- Logo at the Top Left of the Navbar -->
+      <div class="mb-6">
+        <img src="./assets/images/chrissain-logo.png" alt="Logo" class="w-24" />
+      </div>
+
+      <!-- Navigation Links -->
+      <ul class="space-y-4">
+        <!-- For user role -->
+        <ng-container *ngIf="role === 'user'">
+          <li>
+            <a
+              routerLink="/dashboard"
+              class="block nav-link flex items-center"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              <span class="inline-block mr-2">
+                <!-- Home Icon -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6"
+                  />
+                </svg>
+              </span>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/deposit"
+              class="block nav-link flex items-center"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              <span class="inline-block mr-2">
+                <!-- Deposit Icon: Arrow Down Circle -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m0 0l-4-4m4 4l4-4M4 12h16"
+                  />
+                </svg>
+              </span>
+              Deposit
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/withdraw"
+              class="block nav-link flex items-center"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              <span class="inline-block mr-2">
+                <!-- Withdraw Icon: Arrow Up Circle -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 20V4m0 0l-4 4m4-4l4 4"
+                  />
+                </svg>
+              </span>
+              Withdraw
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/transactions"
+              class="block nav-link flex items-center"
+            >
+              <span class="inline-block mr-2">
+                <!-- Transactions Icon: Document Text -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v12a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </span>
+              Transactions
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- For home role -->
+        <ng-container *ngIf="role === 'admin'">
+          <li>
+            <a
+              routerLink="/admin"
+              class="block nav-link flex items-center"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              <span class="inline-block mr-2">
+                <!-- Users Icon -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 20h5v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2h5"
+                  />
+                  <circle
+                    cx="12"
+                    cy="7"
+                    r="4"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    fill="none"
+                  />
+                </svg>
+              </span>
+              Users
+            </a>
+          </li>
+
+          <li>
+            <a
+              routerLink="/history"
+              class="block nav-link flex items-center"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              <span class="inline-block mr-2">
+                <!-- Requests Icon: Inbox -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2z"
+                  />
+                </svg>
+              </span>
+              Transaction History
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- Logout (common for both roles) -->
+        <li>
+          <button
+            (click)="logout()"
+            class="w-full text-left block nav-link flex items-center"
+          >
+            <span class="inline-block mr-2">
+              <!-- Logout Icon: Arrow Right On Rectangle -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1"
+                />
+              </svg>
+            </span>
+            Logout
+          </button>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 bg-gray-50 p-3 overflow-auto">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<!-- Custom Styles to Match the Login Theme -->
+<style>
+  /* Navigation link default and hover styling for the gradient sidebar */
+  .nav-link {
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    transition: background 200ms;
+  }
+  .nav-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+</style>

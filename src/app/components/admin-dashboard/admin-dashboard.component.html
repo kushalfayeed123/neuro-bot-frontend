@@ -1,0 +1,42 @@
+<div class="mx-auto bg-white shadow rounded p-6 h-screen">
+  <h2 class="text-2xl font-bold mb-4">Admin Dashboard</h2>
+  <div *ngIf="error" class="bg-red-100 text-red-700 p-2 rounded mb-4">
+    {{ error }}
+  </div>
+  <div *ngIf="message" class="bg-green-100 text-green-700 p-2 rounded mb-4">
+    {{ message }}
+  </div>
+  <h3 class="text-xl font-semibold mb-2">All Users</h3>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">
+            UID
+          </th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">
+            Name
+          </th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">
+            Email
+          </th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">
+            Role
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr
+          *ngFor="let user of users"
+          class="cursor-pointer hover:bg-gray-100"
+          (click)="goToUserDetails(user)"
+        >
+          <td class="px-4 py-2 text-sm text-gray-900">{{ user.uid }}</td>
+          <td class="px-4 py-2 text-sm text-gray-900">{{ user.name }}</td>
+          <td class="px-4 py-2 text-sm text-gray-900">{{ user.email }}</td>
+          <td class="px-4 py-2 text-sm text-gray-900">{{ user.role }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

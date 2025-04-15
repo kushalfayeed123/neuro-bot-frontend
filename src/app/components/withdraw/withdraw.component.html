@@ -1,0 +1,111 @@
+<div class="min-h-screen bg-gray-100">
+  <!-- Header that adheres to the app theme -->
+  <header class="w-full py-4 bg-white border-b">
+    <h1 class="text-3xl text-center font-bold text-[#590202]">
+      Withdrawal Request
+    </h1>
+  </header>
+
+  <!-- Main content container -->
+  <div class="max-w-md mx-auto p-6">
+    <!-- Dynamic Progress Indicator (visible on form view) -->
+    <div class="mb-6" *ngIf="currentStep === 1">
+      <div class="flex justify-center items-center space-x-2">
+        <div
+          class="w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold bg-[#a61103] text-white border-[#590202]"
+        >
+          1
+        </div>
+        <span class="text-gray-600">Enter Details</span>
+      </div>
+    </div>
+
+    <!-- Step 1: Withdrawal Form -->
+    <div *ngIf="currentStep === 1" class="bg-white shadow rounded p-6">
+      <h2 class="text-2xl font-bold mb-4">Withdrawal Request</h2>
+      <div *ngIf="error" class="bg-red-100 text-red-700 p-2 rounded mb-4">
+        {{ error }}
+      </div>
+      <div *ngIf="message" class="bg-green-100 text-green-700 p-2 rounded mb-4">
+        {{ message }}
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Select Currency</label>
+        <select
+          [(ngModel)]="withdrawData.currency"
+          class="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#590202]"
+        >
+          <option value="">--Select--</option>
+          <option *ngFor="let curr of availableCurrencies" [value]="curr.id">
+            {{ curr.name }}
+          </option>
+        </select>
+      </div>
+      <!-- Conditional fields based on currency selection -->
+      <div *ngIf="withdrawData.currency === 'USD'" class="mb-4">
+        <label class="block text-gray-700">Account Number</label>
+        <input
+          type="text"
+          [(ngModel)]="withdrawData.accountNumber"
+          class="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#590202]"
+        />
+      </div>
+      <div
+        *ngIf="withdrawData.currency && withdrawData.currency !== 'USD'"
+        class="mb-4"
+      >
+        <label class="block text-gray-700">Destination Wallet Address</label>
+        <input
+          type="text"
+          [(ngModel)]="withdrawData.walletAddress"
+          class="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#590202]"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Amount</label>
+        <input
+          type="number"
+          [(ngModel)]="withdrawData.amount"
+          class="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#590202]"
+        />
+      </div>
+      <button
+        (click)="submitWithdraw()"
+        class="w-full bg-[#a61103] text-white py-2 rounded hover:bg-[#590202] transition-colors duration-300"
+        [disabled]="processingWithdrawal"
+      >
+        Confirm Withdrawal
+      </button>
+    </div>
+
+    <!-- Step 2: Success Screen -->
+    <div
+      *ngIf="currentStep === 2"
+      class="bg-white shadow rounded p-6 text-center"
+    >
+      <h2 class="text-3xl font-bold mb-4" style="color: #590202">
+        Withdrawal Request Successful!
+      </h2>
+      <p class="mb-6 text-gray-700">
+        Your withdrawal request has been submitted successfully and is currently
+        processing, we will get in touch when it is done.
+      </p>
+      <div
+        class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4"
+      >
+        <button
+          (click)="restartWithdrawal()"
+          class="w-full sm:w-auto bg-[#a61103] text-white py-2 px-4 rounded hover:bg-[#590202] transition-colors duration-300"
+        >
+          Reinitiate Withdrawal
+        </button>
+        <button
+          (click)="goToDashboard()"
+          class="w-full sm:w-auto bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-900 transition-colors duration-300"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

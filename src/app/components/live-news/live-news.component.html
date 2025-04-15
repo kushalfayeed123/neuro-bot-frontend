@@ -1,0 +1,13 @@
+<div class="overflow-auto h-40">
+  <ul class="list-disc list-inside text-gray-600">
+    <li *ngFor="let news of newsItems">
+      <a
+        [href]="news.url"
+        target="_blank"
+        class="text-[#590202] hover:underline"
+      >
+        {{ news.title }}
+      </a>
+    </li>
+  </ul>
+</div>

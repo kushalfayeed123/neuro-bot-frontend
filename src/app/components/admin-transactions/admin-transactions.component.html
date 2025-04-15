@@ -1,0 +1,109 @@
+<div
+  class="min-h-screen h-[100vh] p-4 bg-white text-black"
+  *ngIf="transactions"
+>
+  <div class="bg-white shadow-xl rounded-lg p-6 border border-gray-300">
+    <h3 class="text-2xl font-semibold text-black mb-4">Transaction History</h3>
+
+    <!-- Tabs -->
+    <div class="flex space-x-4 border-b border-gray-300 mb-4">
+      <button
+        (click)="activeTab = 'deposit'"
+        [ngClass]="{
+          'border-[#a61103] text-[#a61103]': activeTab === 'deposit'
+        }"
+        class="pb-2 px-4 border-b-2 text-gray-600 font-medium transition duration-300"
+      >
+        Deposits
+      </button>
+      <button
+        (click)="activeTab = 'withdraw'"
+        [ngClass]="{
+          'border-[#a61103] text-[#a61103]': activeTab === 'withdraw'
+        }"
+        class="pb-2 px-4 border-b-2 text-gray-600 font-medium transition duration-300"
+      >
+        Withdrawals
+      </button>
+    </div>
+
+    <div *ngIf="filteredTransactions().length > 0" class="space-y-4">
+      <div
+        *ngFor="let transaction of filteredTransactions()"
+        class="bg-white shadow-md rounded-lg p-6 border-l-4"
+        [ngClass]="{
+          'border-green-500': transaction.status === 'approved',
+          'border-yellow-500': transaction.status === 'pending',
+          'border-red-500': transaction.status === 'rejected'
+        }"
+      >
+        <div class="flex justify-between items-center mb-3">
+          <h4 class="font-semibold text-black">{{ transaction.userName }}</h4>
+          <span class="text-sm text-gray-500">
+            {{ transaction.createdAt | date : "medium" }}
+          </span>
+        </div>
+        <div
+          *ngIf="transaction.currency === 'cash app'"
+          class="flex flex-col gap-2"
+        >
+          <p>
+            <span class="font-semibold text-black">Amount:</span>
+            {{ transaction.amount | currency : "USD" : "symbol" : "1.2-2" }}
+          </p>
+          <p>
+            <span class="font-semibold text-black">Currency:</span>
+            {{ transaction.currency }}
+          </p>
+        </div>
+        <div
+          *ngIf="transaction.currency !== 'cash app'"
+          class="flex flex-col gap-2"
+        >
+          <p>
+            <span class="font-semibold text-black">Amount:</span>
+            {{ transaction.amount }}
+          </p>
+          <p>
+            <span class="font-semibold text-black">Currency:</span>
+            {{ transaction.currency }}
+          </p>
+        </div>
+        <div class="flex justify-between mt-2">
+          <p>
+            <span class="font-semibold text-black">Status: </span>
+            <span
+              [ngClass]="{
+                'text-green-600': transaction.status === 'approved',
+                'text-yellow-600': transaction.status === 'pending',
+                'text-red-600': transaction.status === 'rejected'
+              }"
+            >
+              {{ transaction.status }}
+            </span>
+          </p>
+          <div
+            *ngIf="
+              transaction.status === 'pending' && transaction.type === 'deposit'
+            "
+            class="flex space-x-2"
+          >
+            <button
+              (click)="approveTransaction(transaction)"
+              class="bg-green-600 text-white py-1 px-4 rounded-lg shadow-md hover:bg-green-700 transition"
+            >
+              Approve
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="filteredTransactions().length === 0"
+      class="bg-white shadow-md rounded-lg p-6 text-center"
+    >
+      <p class="text-gray-500">No transactions found.</p>
+    </div>
+  </div>
+</div>

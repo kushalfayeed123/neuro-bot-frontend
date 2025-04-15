@@ -1,0 +1,54 @@
+<div class="min-h-screen p-4 bg-white text-black" *ngIf="transactions">
+    <div class="bg-white shadow-xl rounded-lg p-6 border border-gray-300">
+      <h3 class="text-2xl font-semibold text-black mb-4">Transaction History</h3>
+      <div *ngIf="transactions.length > 0" class="space-y-4">
+        <div *ngFor="let transaction of transactions"
+             class="bg-white shadow-md rounded-lg p-6 border-l-4"
+             [ngClass]="{
+               'border-green-500': transaction.status === 'approved',
+               'border-yellow-500': transaction.status === 'pending',
+               'border-red-500': transaction.status === 'rejected'
+             }">
+          <div class="flex justify-between items-center mb-3">
+            <h4 class="font-semibold text-black">{{ transaction.type }}</h4>
+            <span class="text-sm text-gray-500">
+              {{ transaction.createdAt | date:'medium' }}
+            </span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <p>
+              <span class="font-semibold text-black">Amount:</span>
+              {{ transaction.amount | currency:'USD':'symbol':'1.2-2' }}
+            </p>
+            <p>
+              <span class="font-semibold text-black">Currency:</span>
+              {{ transaction.currency }}
+            </p>
+          </div>
+          <div class="flex justify-between mt-2">
+            <p>
+              <span class="font-semibold text-black">Status: </span>
+              <span [ngClass]="{
+                'text-green-600': transaction.status === 'approved',
+                'text-yellow-600': transaction.status === 'pending',
+                'text-red-600': transaction.status === 'rejected'
+              }">
+                {{ transaction.status }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="transactions.length === 0"
+           class="bg-white shadow-md rounded-lg p-6 text-center">
+        <p class="text-gray-500">No transactions found.</p>
+      </div>
+      <div class="mt-6 text-center">
+        <button (click)="goBack()"
+                class="bg-gradient-to-r from-[#590202] to-[#a61103] text-white py-3 px-8 rounded-lg shadow-lg hover:opacity-90 transition duration-300">
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+  

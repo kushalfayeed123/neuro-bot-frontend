@@ -1,0 +1,34 @@
+<!-- <div class="bg-white shadow-md rounded-lg p-6">
+  <ngx-charts-area-chart
+    [view]="view"
+    [scheme]="colorScheme"
+    [results]="cryptoData"
+    [gradient]="true"
+    [xAxis]="false"
+    [yAxis]="false"
+    [legend]="!isMobile"
+    [showXAxisLabel]="false"
+    [showYAxisLabel]="false"
+    [animations]="true"
+  >
+  </ngx-charts-area-chart>
+</div> -->
+
+<h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">
+  Crypto Market Trends
+</h3>
+
+<div id="cryptoChart" style="height: 400px">
+  <apx-chart
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [xaxis]="chartOptions.xaxis"
+    [dataLabels]="chartOptions.dataLabels"
+    [stroke]="chartOptions.stroke"
+    [legend]="chartOptions.legend"
+    [colors]="chartOptions.colors"
+    [responsive]="chartOptions.responsive"
+    [title]="chartOptions.title"
+  >
+  </apx-chart>
+</div>
