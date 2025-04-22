@@ -2,12 +2,12 @@
   <!-- Mobile Toggle Button -->
   <button
     (click)="toggleSidebar()"
-    class="md:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded shadow"
+    class="md:hidden fixed top-4 left-4 z-50 p-2 bg-gray-800 rounded shadow"
   >
     <svg
       *ngIf="!isSidebarOpen"
       xmlns="http://www.w3.org/2000/svg"
-      class="h-6 w-6 text-[#590202]"
+      class="h-6 w-6 text-[#00ff9d]"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -22,7 +22,7 @@
     <svg
       *ngIf="isSidebarOpen"
       xmlns="http://www.w3.org/2000/svg"
-      class="h-6 w-6 text-[#590202]"
+      class="h-6 w-6 text-[#00ff9d]"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -36,14 +36,13 @@
     </svg>
   </button>
 
-  <!-- Sidebar with Gradient Background -->
+  <!-- Sidebar with Solid Background -->
   <aside
     [ngClass]="{
       '-translate-x-full': !isSidebarOpen,
       'translate-x-0': isSidebarOpen
     }"
-    style="background-image: linear-gradient(152deg, #590202 0%, #a61103 100%)"
-    class="fixed inset-y-0 left-0 transform transition duration-300 ease-in-out w-64 shadow-lg z-40 md:relative md:translate-x-0"
+    class="fixed inset-y-0 left-0 transform transition duration-300 ease-in-out w-64 shadow-lg z-40 md:relative md:translate-x-0 bg-gray-800"
   >
     <div class="p-4">
       <!-- Logo at the Top Left of the Navbar -->
@@ -261,7 +260,7 @@
   </aside>
 
   <!-- Main Content -->
-  <main class="flex-1 bg-gray-50 p-3 overflow-auto">
+  <main class="flex-1 bg-gray-900 p-3 overflow-auto">
     <router-outlet></router-outlet>
   </main>
 </div>

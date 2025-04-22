@@ -1,14 +1,14 @@
 <!-- Main User Dashboard: Shown when userData is loaded -->
-<div class="min-h-screen p-4 bg-white text-black" *ngIf="userData">
-  <div class="bg-white shadow-xl rounded-lg p-6 border border-gray-300">
+<div class="min-h-screen p-4 bg-gray-900 text-gray-100" *ngIf="userData">
+  <div class="bg-gray-800 shadow-xl rounded-lg p-6 border border-gray-700">
     <!-- Stock Prices Carousel -->
     <div
-      class="mb-4 overflow-hidden whitespace-nowrap bg-gray-900 p-4 rounded-lg"
+      class="mb-4 overflow-hidden whitespace-nowrap bg-gray-950 p-4 rounded-lg"
     >
       <marquee
         behavior="scroll"
         direction="left"
-        class="text-lg font-semibold text-white"
+        class="text-lg font-semibold text-gray-200"
       >
         <span
           *ngFor="let stock of stockPrices"
@@ -24,23 +24,23 @@
     <!-- Header: Welcome & Action Buttons -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-6">
       <div>
-        <p class="text-3xl font-bold text-[#590202]">
+        <p class="text-3xl font-bold text-[#00ff9d]">
           Welcome, {{ userData.name }}
         </p>
-        <p class="text-md text-gray-700">
+        <p class="text-md text-gray-300">
           <span class="font-semibold">Email:</span> {{ userData.email }}
         </p>
       </div>
       <div class="flex gap-4 mt-4 md:mt-0">
         <button
           (click)="navigateToDeposit()"
-          class="bg-gradient-to-r from-[#590202] to-[#a61103] text-white py-3 px-6 rounded-lg shadow-lg hover:opacity-90 transition duration-300"
+          class="bg-[#00ff9d] text-white py-3 px-6 rounded-lg shadow-lg hover:opacity-90 transition duration-300"
         >
           Add Funds
         </button>
         <button
           (click)="navigateToWithdraw()"
-          class="bg-gradient-to-r from-[#a61103] to-[#590202] text-white py-3 px-6 rounded-lg shadow-lg hover:opacity-90 transition duration-300"
+          class="bg-[#00ff9d] text-white py-3 px-6 rounded-lg shadow-lg hover:opacity-90 transition duration-300"
         >
           Withdraw Funds
         </button>
@@ -48,10 +48,10 @@
     </div>
 
     <!-- Balances Section -->
-    <h3 class="text-2xl font-semibold text-black mb-4">Balances</h3>
+    <h3 class="text-2xl font-semibold text-gray-200 mb-4">Balances</h3>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <!-- Total Balance Card -->
-      <div class="shadow-md rounded-lg p-6 bg-black text-white">
+      <div class="shadow-md rounded-lg p-6 bg-gray-950 text-white">
         <h4 class="text-lg font-medium uppercase">Total Balance</h4>
         <p class="text-2xl font-semibold">
           {{
@@ -61,7 +61,7 @@
         </p>
       </div>
       <!-- Profit Card -->
-      <div class="shadow-md rounded-lg p-6 bg-gray-800 text-white">
+      <div class="shadow-md rounded-lg p-6 bg-gray-900 text-white">
         <h4 class="text-lg font-medium uppercase">Profit</h4>
         <p class="text-2xl font-semibold">
           {{ userData.balances.profit | currency : "USD" : "symbol" : "1.2-2" }}
@@ -71,11 +71,11 @@
 
     <!-- Portfolio Overview Section -->
     <div class="mt-8">
-      <h3 class="text-2xl font-semibold text-black mb-4">Portfolio Overview</h3>
+      <h3 class="text-2xl font-semibold text-gray-200 mb-4">Portfolio Overview</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Investment Distribution Chart -->
-        <div class="shadow-md rounded-lg p-2 bg-gray-100">
-          <h4 class="text-lg font-medium text-[#590202] uppercase">
+        <div class="shadow-md rounded-lg p-2 bg-gray-800">
+          <h4 class="text-lg font-medium text-[#00ff9d] uppercase">
             Investment Distribution
           </h4>
           <app-investment-distribution-chart
@@ -86,8 +86,8 @@
           </app-investment-distribution-chart>
         </div>
         <!-- Performance Summary Chart -->
-        <div class="shadow-md rounded-lg p-6 bg-gray-100">
-          <h4 class="text-lg font-medium text-[#590202] uppercase">
+        <div class="shadow-md rounded-lg p-6 bg-gray-800">
+          <h4 class="text-lg font-medium text-[#00ff9d] uppercase">
             Performance Summary
           </h4>
           <app-performance-summary-chart
@@ -108,7 +108,7 @@
 <!-- Error Message -->
 <div
   *ngIf="!userData"
-  class="max-w-md mx-auto bg-blue-100 text-blue-700 p-4 rounded-lg mt-6 shadow-md"
+  class="max-w-md mx-auto bg-gray-800 text-gray-200 p-4 rounded-lg mt-6 shadow-md"
 >
   Loading user data ...
 </div>

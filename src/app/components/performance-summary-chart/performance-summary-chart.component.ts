@@ -11,8 +11,11 @@ import {
   ApexDataLabels,
   ApexStroke,
   ApexXAxis,
+  ApexYAxis,
   ApexResponsive,
   ApexTitleSubtitle,
+  ApexGrid,
+  ApexTooltip,
 } from "ng-apexcharts";
 import { ChartComponent } from "ng-apexcharts";
 
@@ -20,11 +23,14 @@ export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
+  yaxis?: ApexYAxis;
   dataLabels: ApexDataLabels;
   stroke: ApexStroke;
   responsive: ApexResponsive[];
   title: ApexTitleSubtitle;
   colors: string[];
+  grid?: ApexGrid;
+  tooltip?: ApexTooltip;
 };
 
 @Component({
@@ -92,19 +98,38 @@ export class PerformanceSummaryChartComponent implements OnInit {
         height: 400,
         width: chartWidth,
         animations: { enabled: true },
+        background: '#1f2937', // Dark background
+        foreColor: '#e5e7eb', // Light text
       },
       title: {
         text: "",
         align: "left",
-        style: { fontSize: "18px", color: "#333" },
+        style: { fontSize: "18px", color: "#e5e7eb" },
       },
       xaxis: {
         categories: categories,
+        labels: {
+          style: {
+            colors: '#e5e7eb' // Light text for x-axis labels
+          }
+        }
       },
-      dataLabels: { enabled: true },
+      yaxis: {
+        labels: {
+          style: {
+            colors: '#e5e7eb' // Light text for y-axis labels
+          }
+        }
+      },
+      dataLabels: { 
+        enabled: true,
+        style: {
+          colors: ['#e5e7eb'] // Light text for data labels
+        }
+      },
       stroke: { show: true, width: 2, colors: ["transparent"] },
-      // Use your app's branding: primary red (#590202), secondary red (#a61103), then black and dark grays.
-      colors: ["#590202", "#a61103", "#000000", "#333333", "#555555"],
+      // Use the app's branding: neon green (#00ff9d) and dark grays
+      colors: ["#00ff9d", "#4b5563", "#6b7280", "#9ca3af", "#d1d5db"],
       responsive: [
         {
           breakpoint: 768,
@@ -113,6 +138,16 @@ export class PerformanceSummaryChartComponent implements OnInit {
           },
         },
       ],
+      grid: {
+        borderColor: '#374151', // Darker grid lines
+        strokeDashArray: 4,
+      },
+      tooltip: {
+        theme: 'dark',
+        style: {
+          fontSize: '12px'
+        }
+      }
     };
   }
 }

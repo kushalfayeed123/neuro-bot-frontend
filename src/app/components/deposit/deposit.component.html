@@ -1,7 +1,7 @@
-<div class="min-h-screen bg-gray-100">
+<div class="min-h-screen bg-gray-900">
   <!-- Header that adheres to the app theme -->
-  <header class="w-full py-4 bg-white border-b">
-    <h1 class="text-3xl text-center font-bold text-[#590202]">
+  <header class="w-full py-4 bg-gray-800 border-b border-gray-700">
+    <h1 class="text-3xl text-center font-bold text-[#00ff9d]">
       Fund your wallet
     </h1>
   </header>
@@ -16,48 +16,48 @@
         <div
           class="w-10 h-10 mx-auto rounded-full border-2 flex items-center justify-center font-bold"
           [ngClass]="{
-            'bg-[#a61103] text-white border-[#590202]': currentStep >= 1,
-            'bg-gray-300 text-gray-700': currentStep < 1
+            'bg-[#00ff9d] text-white border-[#590202]': currentStep >= 1,
+            'bg-gray-700 text-gray-300': currentStep < 1
           }"
         >
           1
         </div>
-        <p class="text-xs mt-1">Enter Amount</p>
+        <p class="text-xs mt-1 text-gray-300">Enter Amount</p>
       </div>
       <div class="flex-1 text-center">
         <div
           class="w-10 h-10 mx-auto rounded-full border-2 flex items-center justify-center font-bold"
           [ngClass]="{
-            'bg-[#a61103] text-white border-[#590202]': currentStep >= 2,
-            'bg-gray-300 text-gray-700': currentStep < 2
+            'bg-[#00ff9d] text-white border-[#590202]': currentStep >= 2,
+            'bg-gray-700 text-gray-300': currentStep < 2
           }"
         >
           2
         </div>
-        <p class="text-xs mt-1">Wallet & Transfer</p>
+        <p class="text-xs mt-1 text-gray-300">Wallet & Transfer</p>
       </div>
       <div class="flex-1 text-center">
         <div
           class="w-10 h-10 mx-auto rounded-full border-2 flex items-center justify-center font-bold"
           [ngClass]="{
-            'bg-[#a61103] text-white border-[#590202]': currentStep >= 3,
-            'bg-gray-300 text-gray-700': currentStep < 3
+            'bg-[#00ff9d] text-white border-[#590202]': currentStep >= 3,
+            'bg-gray-700 text-gray-300': currentStep < 3
           }"
         >
           3
         </div>
-        <p class="text-xs mt-1">Complete</p>
+        <p class="text-xs mt-1 text-gray-300">Complete</p>
       </div>
     </div>
     <div
       *ngIf="currentStep !== 3"
       class="rounded-lg p-4 mb-6"
-      style="background-color: rgba(166, 17, 3, 0.1)"
+      style="background-color: rgba(0, 255, 157, 0.2)"
     >
-      <h2 class="text-2xl font-bold mb-2" style="color: #590202">
+      <h2 class="text-2xl font-bold mb-2" style="color: #00ff9d">
         Funding Instructions
       </h2>
-      <ol class="list-decimal list-inside text-gray-800 space-y-1">
+      <ol class="list-decimal list-inside text-gray-300 space-y-1">
         <li>Enter the amount you wish to fund.</li>
         <li>
           Click <span class="font-semibold">Approve Funding</span> to display
@@ -76,48 +76,48 @@
         <li>
           If time expires, you will be prompted to reinitiate the transfer.
         </li>
-        <li class="font-semibold text-green-700">
+        <li class="font-semibold text-green-400">
           All transactions are secure and encrypted to protect your funds.
         </li>
       </ol>
     </div>
 
     <!-- Step 1: Enter Deposit Amount -->
-    <div *ngIf="currentStep === 1" class="bg-white shadow rounded p-6">
-      <h2 class="text-2xl font-bold mb-4" style="color: #590202">
+    <div *ngIf="currentStep === 1" class="bg-gray-800 shadow rounded p-6 border border-gray-700">
+      <h2 class="text-2xl font-bold mb-4" style="color: #00ff9d">
         Fund Your Account
       </h2>
-      <div *ngIf="error" class="bg-red-100 text-red-700 p-2 rounded mb-4">
+      <div *ngIf="error" class="bg-red-900 text-red-200 p-2 rounded mb-4">
         {{ error }}
       </div>
-      <div *ngIf="message" class="bg-green-100 text-green-700 p-2 rounded mb-4">
+      <div *ngIf="message" class="bg-green-900 text-green-200 p-2 rounded mb-4">
         {{ message }}
       </div>
       <div class="mb-4">
-        <label class="block text-gray-700">Enter Amount to Fund</label>
+        <label class="block text-gray-300">Enter Amount to Fund</label>
         <input
           type="number"
           [(ngModel)]="depositAmount"
-          class="mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#a61103]"
+          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
         />
       </div>
       <button
         (click)="approveFunding()"
-        class="w-full bg-[#a61103] text-white py-2 rounded hover:bg-[#590202] transition-colors duration-300"
+        class="w-full bg-[#00ff9d] text-white py-2 rounded hover:opacity-90 transition-colors duration-300"
       >
         Approve Funding
       </button>
     </div>
 
     <!-- Step 2: Wallet Selection and Countdown -->
-    <div *ngIf="currentStep === 2" class="bg-white shadow rounded p-6 mt-6">
+    <div *ngIf="currentStep === 2" class="bg-gray-800 shadow rounded p-6 mt-6 border border-gray-700">
       <div
         class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4"
       >
-        <h2 class="text-2xl font-bold" style="color: #590202">
+        <h2 class="text-2xl font-bold" style="color: #00ff9d">
           Select a Wallet
         </h2>
-        <div class="mt-2 sm:mt-0 text-sm text-gray-700">
+        <div class="mt-2 sm:mt-0 text-sm text-gray-300">
           Time Remaining: {{ countdown * 1000 | date : "mm:ss" }}
         </div>
       </div>
@@ -125,7 +125,7 @@
       <!-- Processing message -->
       <div
         *ngIf="processingDeposit"
-        class="bg-blue-100 text-blue-700 p-2 rounded mb-4"
+        class="bg-blue-900 text-blue-200 p-2 rounded mb-4"
       >
         Your deposit request has been received and is currently processing...
       </div>
@@ -134,9 +134,9 @@
         <li
           *ngFor="let currency of currencies"
           (click)="selectCurrency(currency)"
-          class="cursor-pointer p-3 rounded border hover:bg-gray-50 flex flex-col sm:flex-row justify-between items-center"
+          class="cursor-pointer p-3 rounded border border-gray-700 hover:bg-gray-700 flex flex-col sm:flex-row justify-between items-center"
           [ngClass]="{
-            'bg-[#a61103] text-white border-[#590202]':
+            'bg-[#00ff9d] text-white border-[#590202]':
               selectedCurrency && selectedCurrency.id === currency.id
           }"
         >
@@ -154,14 +154,14 @@
           <div class="flex items-center space-x-2 mt-2 sm:mt-0">
             <button
               (click)="copyAddress(currency); $event.stopPropagation()"
-              class="bg-gray-200 text-gray-800 px-2 py-1 rounded hover:bg-gray-300 transition-colors duration-300"
+              class="bg-gray-700 text-gray-200 px-2 py-1 rounded hover:bg-gray-600 transition-colors duration-300"
             >
               Copy
             </button>
             <!-- "Copied!" indicator -->
             <span
               *ngIf="copiedCurrencyId === currency.id"
-              class="text-green-600 font-semibold"
+              class="text-green-400 font-semibold"
             >
               Copied!
             </span>
@@ -169,28 +169,28 @@
         </li>
       </ul>
       <div *ngIf="selectedCurrency" class="mb-4">
-        <p class="mb-2">
+        <p class="mb-2 text-gray-300">
           Copy the wallet address above and transfer the funds externally.
         </p>
         <div class="mb-4">
-          <label class="block text-gray-700">Amount to Deposit</label>
+          <label class="block text-gray-300">Amount to Deposit</label>
           <input
             type="number"
             [(ngModel)]="depositAmount"
-            class="mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#a61103]"
+            class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
           />
         </div>
       </div>
       <div
         *ngIf="timeoutMessage"
-        class="bg-yellow-100 text-yellow-800 p-2 rounded mb-4"
+        class="bg-yellow-900 text-yellow-200 p-2 rounded mb-4"
       >
         {{ timeoutMessage }}
       </div>
       <button
         (click)="confirmDeposit()"
         [disabled]="countdown === 0 || processingDeposit"
-        class="w-full bg-[#a61103] text-white py-2 rounded hover:bg-[#590202] transition-colors duration-300"
+        class="w-full bg-[#00ff9d] text-white py-2 rounded hover:opacity-90 transition-colors duration-300"
       >
         I have transferred funds
       </button>
@@ -199,12 +199,12 @@
     <!-- Step 3: Success Screen (Instructions hidden) -->
     <div
       *ngIf="currentStep === 3"
-      class="bg-white shadow rounded p-6 mt-6 text-center"
+      class="bg-gray-800 shadow rounded p-6 mt-6 text-center border border-gray-700"
     >
-      <h2 class="text-3xl font-bold mb-4" style="color: #590202">
+      <h2 class="text-3xl font-bold mb-4" style="color: #00ff9d">
         Deposit Successful!
       </h2>
-      <p class="mb-6 text-gray-700">
+      <p class="mb-6 text-gray-300">
         Your deposit request has been processed successfully.
       </p>
       <div
@@ -212,13 +212,13 @@
       >
         <button
           (click)="restartFunding()"
-          class="w-full sm:w-auto bg-[#a61103] text-white py-2 px-4 rounded hover:bg-[#590202] transition-colors duration-300"
+          class="w-full sm:w-auto bg-[#00ff9d] text-white py-2 px-4 rounded hover:opacity-90 transition-colors duration-300"
         >
           Reinitiate Funding
         </button>
         <button
           (click)="goToDashboard()"
-          class="w-full sm:w-auto bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-900 transition-colors duration-300"
+          class="w-full sm:w-auto bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-600 transition-colors duration-300"
         >
           Go to Dashboard
         </button>
@@ -230,17 +230,17 @@
 <!-- Cash App Maintenance Modal -->
 <div
   *ngIf="showCashAppModal"
-  class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+  class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"
 >
-  <div class="bg-white rounded shadow-lg p-6 max-w-sm w-full">
-    <h3 class="text-xl font-bold mb-4">Notice</h3>
-    <p class="text-gray-700 mb-6">
+  <div class="bg-gray-800 rounded shadow-lg p-6 max-w-sm w-full border border-gray-700">
+    <h3 class="text-xl font-bold mb-4 text-gray-100">Notice</h3>
+    <p class="text-gray-300 mb-6">
       Cash App deposit is currently under maintenance, please contact customer
       support to complete the transaction.
     </p>
     <button
       (click)="closeCashAppModal()"
-      class="w-full bg-[#a61103] text-white py-2 rounded hover:bg-[#590202] transition-colors duration-300"
+      class="w-full bg-[#00ff9d] text-white py-2 rounded hover:opacity-90 transition-colors duration-300"
     >
       Close
     </button>

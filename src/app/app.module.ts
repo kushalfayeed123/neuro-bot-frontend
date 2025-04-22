@@ -1,6 +1,6 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 
 import { AppComponent } from "./app.component";
@@ -26,6 +26,9 @@ import { PerformanceSummaryChartComponent } from "./components/performance-summa
 import { NgApexchartsModule } from "ng-apexcharts";
 import { AdminTransactionsComponent } from './components/admin-transactions/admin-transactions.component';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
+import { AuthService } from './services/auth.service';
+import { UserService } from './services/user.service';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -58,7 +61,16 @@ import { ChatbotComponent } from './components/chatbot/chatbot.component';
     NgApexchartsModule,
   ],
   exports: [NgxChartsModule, NgApexchartsModule],
-  providers: [InvestmentService],
+  providers: [
+    InvestmentService,
+    AuthService,
+    UserService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
