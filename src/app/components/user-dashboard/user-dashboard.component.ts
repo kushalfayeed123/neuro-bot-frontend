@@ -3,10 +3,12 @@ import { Router } from "@angular/router";
 import { InvestmentService } from "src/app/investment.service";
 import { HttpClient } from "@angular/common/http";
 import { Color, ScaleType } from "@swimlane/ngx-charts";
+import { UserService, UserProfile } from '../../services/user.service';
 
 @Component({
   selector: "app-user-dashboard",
   templateUrl: "./user-dashboard.component.html",
+  styleUrls: ['./user-dashboard.component.css']
 })
 export class UserDashboardComponent implements OnInit {
   userData: any;
@@ -54,10 +56,17 @@ export class UserDashboardComponent implements OnInit {
     IBM: "#006699",
   };
 
+  profile: UserProfile | null = null;
+  balance: number = 0;
+  depositAmount: number = 0;
+  withdrawAmount: number = 0;
+  loading: boolean = true;
+
   constructor(
     private investmentService: InvestmentService,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private userService: UserService
   ) {}
 
   convertTimestampToDate(seconds: number, nanoseconds: number): Date {
@@ -66,38 +75,39 @@ export class UserDashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.investmentService.showSpinner;
-    const uid = localStorage.getItem("uid");
-    const hash = localStorage.getItem("hash");
-    if (uid && hash) {
-      this.investmentService.getDashboard().subscribe({
-        next: (data) => {
-          this.userData = data;
-        },
-        error: (err) =>
-          (this.error = err.error.error || "Error loading dashboard"),
-      });
-      this.fetchTransactions(uid);
+    // this.investmentService.showSpinner;
+    // const uid = localStorage.getItem("uid");
+    // const hash = localStorage.getItem("hash");
+    // if (uid && hash) {
+    //   this.investmentService.getDashboard().subscribe({
+    //     next: (data) => {
+    //       this.userData = data;
+    //     },
+    //     error: (err) =>
+    //       (this.error = err.error.error || "Error loading dashboard"),
+    //   });
+      // this.fetchTransactions(uid);
       this.fetchCryptoData();
       this.fetchStockPrices();
-      // Fetch user data and stock prices from service or backend.
+      this.loadUserProfile();
+    // }
+    // this.investmentService.hideSpinner;
+  }
 
-      // this.stockPrices = [
-      //   { name: "AAPL", price: 150 },
-      //   { name: "GOOGL", price: 2800 },
-      //   { name: "AMZN", price: 3500 },
-      //   { name: "MSFT", price: 300 },
-      //   { name: "TSLA", price: 800 },
-      //   { name: "FB", price: 340 },
-      //   { name: "NFLX", price: 550 },
-      //   { name: "NVDA", price: 220 },
-      //   { name: "BABA", price: 160 },
-      //   { name: "ORCL", price: 90 },
-      //   { name: "INTC", price: 50 },
-      //   { name: "IBM", price: 140 },
-      // ];
-    }
-    this.investmentService.hideSpinner;
+  loadUserProfile(): void {
+    this.loading = true;
+    this.userService.getProfile().subscribe({
+      next: (profile) => {
+        this.profile = profile;
+        this.balance = profile.wallet?.balance || 0;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading profile:', err);
+        this.error = 'Failed to load user profile';
+        this.loading = false;
+      }
+    });
   }
 
   updateTawkAttributes(userEmail: string, hash: string, userName: string) {
@@ -205,5 +215,32 @@ export class UserDashboardComponent implements OnInit {
 
   navigateToWithdraw(): void {
     this.router.navigate(["/withdraw"]);
+  }
+
+  deposit(): void {
+    if (this.depositAmount <= 0) {
+      this.error = 'Please enter a valid amount';
+      return;
+    }
+    
+    // Implement deposit logic here
+    console.log('Depositing:', this.depositAmount);
+    this.error = '';
+  }
+
+  withdraw(): void {
+    if (this.withdrawAmount <= 0) {
+      this.error = 'Please enter a valid amount';
+      return;
+    }
+    
+    if (this.withdrawAmount > this.balance) {
+      this.error = 'Insufficient balance';
+      return;
+    }
+    
+    // Implement withdraw logic here
+    console.log('Withdrawing:', this.withdrawAmount);
+    this.error = '';
   }
 }

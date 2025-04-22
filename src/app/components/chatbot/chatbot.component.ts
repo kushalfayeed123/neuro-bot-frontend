@@ -6,7 +6,7 @@ import { Component } from "@angular/core";
   styleUrls: ["./chatbot.component.css"],
 })
 export class ChatbotComponent {
-  customerServiceNumber: string = "+18143526380";
+  customerServiceNumber: string = "+16013178091";
 
   startChat(): void {
     // Build the WhatsApp URL

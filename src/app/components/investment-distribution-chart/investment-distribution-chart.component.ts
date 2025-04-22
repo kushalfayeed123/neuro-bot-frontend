@@ -56,6 +56,8 @@ export class InvestmentDistributionChartComponent implements OnInit {
         type: "pie",
         width: "100%",
         height: 400,
+        background: '#1f2937', // Dark background
+        foreColor: '#e5e7eb', // Light text
       },
       labels: [
         "Equities",
@@ -67,21 +69,31 @@ export class InvestmentDistributionChartComponent implements OnInit {
       title: {
         text: "",
         align: "left",
-        style: { fontSize: "18px", color: "#333" },
+        style: { fontSize: "18px", color: "#e5e7eb" },
       },
       // Legend is shown only if window.innerWidth > 600.
       legend: {
         show: window.innerWidth > 600,
         position: "right",
+        labels: {
+          colors: '#e5e7eb' // Light text for legend
+        }
       },
-      // Use your brand colors for the asset classes.
+      // Use the app's branding: neon green (#00ff9d) and dark grays
       colors: [
-        "#590202", // Equities
-        "#a61103", // Bonds
-        "#000000", // Alternatives
-        "#333333", // Real Estate
-        "#555555", // Commodities
+        "#00ff9d", // Neon green for Equities
+        "#34495e", // Dark gray for Bonds
+        "#2c3e50", // Medium dark gray for Alternatives
+        "#6b7280", // Medium gray for Real Estate
+        "#1abc9c", // Light gray for Commodities
       ],
+
+      // "#34495e", // dark blue-gray
+      // "#2c3e50", // deep navy
+      // "#1abc9c", // fresh teal accent
+      // "#e74c3c", // vibrant red
+      // "#f39c12", // striking orange
+      // "#8e44ad", 
       responsive: [
         {
           breakpoint: 600,

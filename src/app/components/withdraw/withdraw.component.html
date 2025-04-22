@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gray-900">
   <!-- Header that adheres to the app theme -->
   <header class="w-full py-4 bg-gray-800 border-b border-gray-700">
-    <h1 class="text-3xl text-center font-bold text-[#a61103]">
+    <h1 class="text-3xl text-center font-bold text-[#00ff9d]">
       Withdrawal Request
     </h1>
   </header>
@@ -12,7 +12,7 @@
     <div class="mb-6" *ngIf="currentStep === 1">
       <div class="flex justify-center items-center space-x-2">
         <div
-          class="w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold bg-[#a61103] text-white border-[#590202]"
+          class="w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold bg-[#00ff9d] text-gray-900 border-[#00ff9d]"
         >
           1
         </div>
@@ -33,7 +33,7 @@
         <label class="block text-gray-300">Select Currency</label>
         <select
           [(ngModel)]="withdrawData.currency"
-          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#a61103] text-gray-100"
+          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
         >
           <option value="">--Select--</option>
           <option *ngFor="let curr of availableCurrencies" [value]="curr.id">
@@ -47,7 +47,7 @@
         <input
           type="text"
           [(ngModel)]="withdrawData.accountNumber"
-          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#a61103] text-gray-100"
+          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
         />
       </div>
       <div
@@ -58,7 +58,7 @@
         <input
           type="text"
           [(ngModel)]="withdrawData.walletAddress"
-          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#a61103] text-gray-100"
+          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
         />
       </div>
       <div class="mb-4">
@@ -66,12 +66,12 @@
         <input
           type="number"
           [(ngModel)]="withdrawData.amount"
-          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#a61103] text-gray-100"
+          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
         />
       </div>
       <button
         (click)="submitWithdraw()"
-        class="w-full bg-[#a61103] text-white py-2 rounded hover:bg-[#590202] transition-colors duration-300"
+        class="w-full bg-gradient-to-r from-[#00ff9d] to-[#00cc7d] text-gray-900 py-2 rounded hover:from-[#00cc7d] hover:to-[#00ff9d] transition-colors duration-300 font-bold"
         [disabled]="processingWithdrawal"
       >
         Confirm Withdrawal
@@ -83,7 +83,7 @@
       *ngIf="currentStep === 2"
       class="bg-gray-800 shadow rounded p-6 text-center border border-gray-700"
     >
-      <h2 class="text-3xl font-bold mb-4" style="color: #a61103">
+      <h2 class="text-3xl font-bold mb-4 text-[#00ff9d]">
         Withdrawal Request Successful!
       </h2>
       <p class="mb-6 text-gray-300">
@@ -95,15 +95,15 @@
       >
         <button
           (click)="restartWithdrawal()"
-          class="w-full sm:w-auto bg-[#a61103] text-white py-2 px-4 rounded hover:bg-[#590202] transition-colors duration-300"
+          class="w-full sm:w-auto bg-gradient-to-r from-[#00ff9d] to-[#00cc7d] text-gray-900 py-2 px-4 rounded hover:from-[#00cc7d] hover:to-[#00ff9d] transition-colors duration-300 font-bold"
         >
           Reinitiate Withdrawal
         </button>
         <button
           (click)="goToDashboard()"
-          class="w-full sm:w-auto bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-600 transition-colors duration-300"
+          class="w-full sm:w-auto bg-gray-700 text-gray-300 py-2 px-4 rounded hover:bg-gray-600 transition-colors duration-300"
         >
-          Back to Dashboard
+          Go to Dashboard
         </button>
       </div>
     </div>

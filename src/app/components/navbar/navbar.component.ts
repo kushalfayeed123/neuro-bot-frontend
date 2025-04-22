@@ -1,31 +1,51 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService, AuthState } from '../../services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
-  selector: "app-navbar",
-  templateUrl: "./navbar.component.html",
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements OnInit {
-  isOpen: boolean = false;
-  role: string = "";
-  isSidebarOpen = false;
+export class NavbarComponent implements OnInit, OnDestroy {
+  isAuthenticated = false;
+  userRole: string | null = null;
+  isSidebarOpen = true;
+  private authSubscription: Subscription | null = null;
 
-  constructor(private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {
+    
+  }
 
   ngOnInit(): void {
-    this.role = localStorage.getItem("role") ?? "";
+    this.authSubscription = this.authService.authState$.subscribe((state: AuthState) => {
+      this.isAuthenticated = state.isAuthenticated;
+      this.userRole = state.role;
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
   }
 
   toggleSidebar(): void {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  toggleMenu() {
-    this.isOpen = !this.isOpen;
-  }
-
-  logout() {
-    localStorage.removeItem("uid");
-    this.router.navigate(["/login"]);
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (error: Error) => {
+        console.error('Logout failed:', error);
+      }
+    });
   }
 }

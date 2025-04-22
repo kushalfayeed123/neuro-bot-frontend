@@ -15,13 +15,23 @@
         {{ error }}
       </div>
       <div class="mb-4">
-        <label for="name" class="block text-gray-300">Full Name</label>
+        <label for="firstName" class="block text-gray-300">First Name</label>
         <input
           type="text"
-          id="name"
-          [(ngModel)]="name"
+          id="firstName"
+          [(ngModel)]="firstName"
           class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
-          placeholder="Enter your full name"
+          placeholder="Enter your first name"
+        />
+      </div>
+      <div class="mb-4">
+        <label for="lastName" class="block text-gray-300">Last Name</label>
+        <input
+          type="text"
+          id="lastName"
+          [(ngModel)]="lastName"
+          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
+          placeholder="Enter your last name"
         />
       </div>
       <div class="mb-4">
@@ -32,6 +42,16 @@
           [(ngModel)]="email"
           class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
           placeholder="Enter your email"
+        />
+      </div>
+      <div class="mb-4">
+        <label for="phoneNumber" class="block text-gray-300">Phone Number</label>
+        <input
+          type="tel"
+          id="phoneNumber"
+          [(ngModel)]="phoneNumber"
+          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
+          placeholder="Enter your phone number (e.g. +1234567890)"
         />
       </div>
       <div class="mb-4">
@@ -53,6 +73,17 @@
           class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
           placeholder="Confirm your password"
         />
+      </div>
+      <div class="mb-4">
+        <label for="tradingMode" class="block text-gray-300">Trading Mode</label>
+        <select
+          id="tradingMode"
+          [(ngModel)]="tradingMode"
+          class="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-[#00ff9d] text-gray-100"
+        >
+          <option value="pooled">Pooled</option>
+          <option value="individual">Individual</option>
+        </select>
       </div>
       <button
         (click)="register()"
