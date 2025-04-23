@@ -17,12 +17,18 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private router: Router
-  ) { }
+  ) { 
+    console.log('Login component constructed');
+  }
 
   ngOnInit() {
+    console.log('Login component initialized');
     // Check if user is already logged in
     if (this.authService.isAuthenticated()) {
+      console.log('User already authenticated, navigating based on role');
       this.navigateBasedOnRole();
+    } else {
+      console.log('User not authenticated, showing login form');
     }
   }
 
@@ -48,15 +54,14 @@ export class LoginComponent implements OnInit {
             this.navigateBasedOnRole();
           },
           error: (err) => {
-            console.error('Profile fetch error:', err);
-            // Still navigate even if profile fetch fails
-            this.navigateBasedOnRole();
+            console.error('Error loading profile:', err);
+            this.error = 'Error loading user profile. Please try again.';
           }
         });
       },
       error: (err) => {
-        console.error('Login error:', err);
-        this.error = err.error?.message || 'Login failed';
+        console.error('Login failed:', err);
+        this.error = 'Invalid email or password. Please try again.';
       }
     });
   }

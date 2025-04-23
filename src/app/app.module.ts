@@ -48,19 +48,18 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     InvestmentDistributionChartComponent,
     PerformanceSummaryChartComponent,
     AdminTransactionsComponent,
-    ChatbotComponent,
+    ChatbotComponent
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    AppRoutingModule,
     CommonModule,
     NgxChartsModule,
     BrowserAnimationsModule,
-    NgApexchartsModule,
+    NgApexchartsModule
   ],
-  exports: [NgxChartsModule, NgApexchartsModule],
   providers: [
     InvestmentService,
     AuthService,
@@ -71,6 +70,6 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
       multi: true
     }
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

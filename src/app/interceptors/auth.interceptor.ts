@@ -16,52 +16,57 @@ export class AuthInterceptor implements HttpInterceptor {
   // List of URLs that should not be intercepted
   private excludedUrls = [
     'https://api.coingecko.com/api/v3/coins/markets',
-    'https://financialmodelingprep.com/api/v3/stock/real-time-price'
+    'https://financialmodelingprep.com/api/v3/stock/real-time-price',
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/auth/check'
   ];
 
   constructor(
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) {
+    console.log('Auth interceptor constructed');
+  }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    console.log('Intercepting request:', request.url);
+    
     // Check if the request URL is in the excluded list
     const isExcludedUrl = this.excludedUrls.some(url => request.url.includes(url));
     
-    // If it's an excluded URL, just pass the request through without modification
     if (isExcludedUrl) {
+      console.log('Request excluded from auth interceptor:', request.url);
       return next.handle(request);
     }
     
-    // Get the token from the auth service
+    // Get the token from localStorage
     const token = this.authService.getToken();
     
-    // Clone the request and add the authorization header if token exists
     if (token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
+      console.log('Adding auth token to request');
+      // Clone the request and add the authorization header
+      const authReq = request.clone({
+        headers: request.headers.set('Authorization', `Bearer ${token}`)
       });
+      
+      return next.handle(authReq).pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Auth interceptor error:', error);
+          
+          // If the error is 401 Unauthorized, redirect to login
+          if (error.status === 401) {
+            console.log('Unauthorized request, redirecting to login');
+            this.authService.logout().subscribe();
+            this.router.navigate(['/login']);
+          }
+          
+          return throwError(error);
+        })
+      );
     }
-
-    // Add secure headers to all requests
-    request = request.clone({
-      withCredentials: true,
-      headers: request.headers
-        .set('X-Requested-With', 'XMLHttpRequest')
-        .set('Content-Type', 'application/json')
-    });
-
-    return next.handle(request).pipe(
-      catchError((error: HttpErrorResponse) => {
-        // Handle 401 Unauthorized errors
-        if (error.status === 401) {
-          this.authService.logout();
-          this.router.navigate(['/login']);
-        }
-        return throwError(() => error);
-      })
-    );
+    
+    console.log('No auth token found, proceeding with original request');
+    return next.handle(request);
   }
 } 
