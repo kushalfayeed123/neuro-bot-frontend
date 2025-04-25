@@ -30,18 +30,18 @@ export class DepositComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Fetch available currencies (wallets)
-    this.investmentService.getCurrencies().subscribe({
-      next: (data: any) => {
-        // Sort the currencies so that "Cash App" is the first item in the list
-        this.currencies = data.sort((a: any, b: any) => {
-          if (a.name.toLowerCase() === "cash app") return -1;
-          if (b.name.toLowerCase() === "cash app") return 1;
-          return 0;
-        });
-      },
-      error: (err) =>
-        (this.error = err.error.error || "Error fetching currencies"),
-    });
+    // this.investmentService.getCurrencies().subscribe({
+    //   next: (data: any) => {
+    //     // Sort the currencies so that "Cash App" is the first item in the list
+    //     this.currencies = data.sort((a: any, b: any) => {
+    //       if (a.name.toLowerCase() === "cash app") return -1;
+    //       if (b.name.toLowerCase() === "cash app") return 1;
+    //       return 0;
+    //     });
+    //   },
+    //   error: (err) =>
+    //     (this.error = err.error.error || "Error fetching currencies"),
+    // });
   }
 
   ngOnDestroy() {

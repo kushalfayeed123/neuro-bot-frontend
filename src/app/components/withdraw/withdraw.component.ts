@@ -27,17 +27,17 @@ export class WithdrawComponent {
     private router: Router
   ) {
     // Fetch currencies from API then add USD manually if not present
-    this.investmentService.getCurrencies().subscribe({
-      next: (data: any) => {
-        // Ensure USD is included
-        this.availableCurrencies = data;
-        if (!this.availableCurrencies.find((c) => c.id === "USD")) {
-          this.availableCurrencies.unshift({ id: "USD", name: "USD" });
-        }
-      },
-      error: (err) =>
-        (this.error = err.error.error || "Error fetching currencies"),
-    });
+    // this.investmentService.getCurrencies().subscribe({
+    //   next: (data: any) => {
+    //     // Ensure USD is included
+    //     this.availableCurrencies = data;
+    //     if (!this.availableCurrencies.find((c) => c.id === "USD")) {
+    //       this.availableCurrencies.unshift({ id: "USD", name: "USD" });
+    //     }
+    //   },
+    //   error: (err) =>
+    //     (this.error = err.error.error || "Error fetching currencies"),
+    // });
   }
 
   submitWithdraw() {
