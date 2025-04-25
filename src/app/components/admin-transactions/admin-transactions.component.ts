@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { forkJoin, Observable } from "rxjs";
 import { InvestmentService } from "src/app/investment.service";
+import { DepositService, DepositTransaction } from "../../services/deposit.service";
 
 interface Transaction {
   id: string;
@@ -11,7 +12,9 @@ interface Transaction {
   status: "approved" | "pending" | "rejected";
   createdAt: any;
   approvedAt?: { _seconds: number; _nanoseconds: number };
-  userName?: string; // New field to store user's name
+  userName?: string;
+  txHash?: string;
+  walletId?: string;
 }
 
 @Component({
@@ -21,13 +24,19 @@ interface Transaction {
 })
 export class AdminTransactionsComponent implements OnInit {
   transactions: Transaction[] = [];
+  pendingDeposits: DepositTransaction[] = [];
   activeTab: "deposit" | "withdraw" = "deposit";
   error: string = "";
+  loading: boolean = false;
 
-  constructor(private investmentService: InvestmentService) {}
+  constructor(
+    private investmentService: InvestmentService,
+    private depositService: DepositService
+  ) {}
 
   ngOnInit() {
     this.loadTransactions();
+    this.loadPendingDeposits();
   }
 
   convertTimestampToDate(seconds: number, nanoseconds: number): Date {
@@ -35,32 +44,37 @@ export class AdminTransactionsComponent implements OnInit {
     return new Date(milliseconds);
   }
 
+  loadPendingDeposits() {
+    this.loading = true;
+    this.depositService.getPendingDeposits().subscribe({
+      next: (deposits) => {
+        this.pendingDeposits = deposits;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = "Failed to load pending deposits";
+        this.loading = false;
+      }
+    });
+  }
+
   async loadTransactions() {
+    this.loading = true;
     this.investmentService.getAllTransactions().subscribe({
       next: (response) => {
         if (response.length === 0) {
           this.transactions = [];
-          // this.loading = false;
+          this.loading = false;
           return;
         }
         const uniqueUserIds = [...new Set(response.map((t: any) => t.uid))];
 
-        // Fetch user details for each unique UID
         const userRequests = uniqueUserIds.map(
           (uid: any) =>
             this.investmentService.getUserDetails(uid) as Observable<any>
         );
         forkJoin(userRequests).subscribe((users) => {
-          // Create a map of UID -> user details
           const userMap = new Map(users.map((user) => [user.uid, user]));
-
-          console.log(users);
-
-          // // Attach user name to transactions
-          this.transactions = response.map((transaction: Transaction) => ({
-            ...transaction,
-            userName: userMap.get(transaction.uid)?.name || "Unknown User",
-          }));
 
           this.transactions = response.map((transaction: any) => {
             const createdAtDate = this.convertTimestampToDate(
@@ -74,32 +88,96 @@ export class AdminTransactionsComponent implements OnInit {
             };
           });
 
-          // this.loading = false;
+          this.loading = false;
         });
       },
-      error: () => (this.error = "Failed to load transactions"),
+      error: () => {
+        this.error = "Failed to load transactions";
+        this.loading = false;
+      },
     });
   }
 
   filteredTransactions() {
+    if (this.activeTab === "deposit") {
+      // Convert pending deposits to match Transaction interface
+      const convertedPendingDeposits = this.pendingDeposits.map(deposit => ({
+        ...deposit,
+        type: 'deposit' as const,
+        userName: 'Unknown User', // Default value
+        currency: 'Crypto' // Default value
+      }));
+      
+      return [...convertedPendingDeposits, ...this.transactions.filter(t => t.type === "deposit" && t.status !== "pending")];
+    }
     return this.transactions.filter((t) => t.type === this.activeTab);
   }
 
-  approveTransaction(transaction: Transaction) {
-    let payload = {
-      transactionId: transaction.id,
-      approved: true, // set to true to approve, false to reject
-    };
-    transaction.status = "approved";
+  approveTransaction(transaction: Transaction | DepositTransaction) {
+    this.loading = true;
+    
+    // Check if it's a deposit transaction by checking for walletId
+    if ('walletId' in transaction) {
+      this.depositService.approveDeposit(transaction.id).subscribe({
+        next: () => {
+          this.loadPendingDeposits();
+          this.loadTransactions();
+        },
+        error: (err) => {
+          this.error = "Failed to approve deposit";
+          this.loading = false;
+        }
+      });
+    } else {
+      let payload = {
+        transactionId: transaction.id,
+        approved: true,
+      };
+      transaction.status = "approved";
 
-    this.investmentService.approveDeposit(payload).subscribe({
-      next: (res) => {
-        this.investmentService.getAllTransactions().subscribe();
-      },
-    });
+      this.investmentService.approveDeposit(payload).subscribe({
+        next: () => {
+          this.loadTransactions();
+        },
+        error: (err) => {
+          this.error = "Failed to approve transaction";
+          this.loading = false;
+        }
+      });
+    }
   }
 
-  denyTransaction(transaction: Transaction) {
-    transaction.status = "rejected";
+  denyTransaction(transaction: Transaction | DepositTransaction) {
+    this.loading = true;
+    
+    // Check if it's a deposit transaction by checking for walletId
+    if ('walletId' in transaction) {
+      this.depositService.rejectDeposit(transaction.id).subscribe({
+        next: () => {
+          this.loadPendingDeposits();
+          this.loadTransactions();
+        },
+        error: (err) => {
+          this.error = "Failed to reject deposit";
+          this.loading = false;
+        }
+      });
+    } else {
+      let payload = {
+        transactionId: transaction.id,
+        approved: false,
+      };
+      transaction.status = "rejected";
+
+      this.investmentService.approveDeposit(payload).subscribe({
+        next: () => {
+          this.loadTransactions();
+        },
+        error: (err) => {
+          this.error = "Failed to reject transaction";
+          this.loading = false;
+        }
+      });
+    }
   }
 }

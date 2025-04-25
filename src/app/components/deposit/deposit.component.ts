@@ -2,46 +2,70 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { InvestmentService } from "src/app/investment.service";
 import { interval, Subscription } from "rxjs";
 import { Router } from "@angular/router";
+import { WalletService, Wallet } from "../../services/wallet.service";
+import { DepositService, CreateDepositRequest } from "../../services/deposit.service";
+
+interface DepositTransaction {
+  walletId: string;
+  amount: number;
+  txHash: string;
+}
 
 @Component({
   selector: "app-deposit",
   templateUrl: "./deposit.component.html",
 })
 export class DepositComponent implements OnInit, OnDestroy {
-  currencies: any[] = [];
-  selectedCurrency: any;
+  Math = Math; // Add Math property to fix template error
+  currencies: Wallet[] = [];
+  selectedCurrency: Wallet | null = null;
   depositAmount: number = 0;
+  txHash: string = "";
   message: string = "";
   error: string = "";
   showCashAppModal: boolean = false; // flag for displaying the modal
+  showTransactionModal: boolean = false;
 
   // Flow control properties
-  currentStep: number = 1; // 1: Enter Amount, 2: Wallet & Transfer, 3: Complete
+  currentStep: number = 1; // 1: Select Wallet, 2: Enter Amount, 3: Complete
   countdown: number = 1200; // 20 minutes in seconds
   countdownSubscription!: Subscription;
   timeoutMessage: string = "";
   copiedCurrencyId: string | null = null;
   processingDeposit: boolean = false; // true when deposit API call is in progress
+  loadingWallets: boolean = false; // true when wallets are being fetched
 
   constructor(
     private investmentService: InvestmentService,
+    private walletService: WalletService,
+    private depositService: DepositService,
     private router: Router
-  ) {}
+  ) {
+    console.log('Deposit component constructed');
+  }
 
   ngOnInit() {
-    // Fetch available currencies (wallets)
-    // this.investmentService.getCurrencies().subscribe({
-    //   next: (data: any) => {
-    //     // Sort the currencies so that "Cash App" is the first item in the list
-    //     this.currencies = data.sort((a: any, b: any) => {
-    //       if (a.name.toLowerCase() === "cash app") return -1;
-    //       if (b.name.toLowerCase() === "cash app") return 1;
-    //       return 0;
-    //     });
-    //   },
-    //   error: (err) =>
-    //     (this.error = err.error.error || "Error fetching currencies"),
-    // });
+    console.log('Deposit component initialized');
+    this.loadAvailableWallets();
+  }
+
+  loadAvailableWallets() {
+    this.loadingWallets = true;
+    this.error = '';
+    
+    console.log('Loading available wallets');
+    this.walletService.getAvailableWallets().subscribe({
+      next: (wallets) => {
+        console.log('Wallets loaded:', wallets);
+        this.currencies = wallets;
+        this.loadingWallets = false;
+      },
+      error: (err) => {
+        console.error('Error loading wallets:', err);
+        this.error = err.error?.message || "Error fetching wallets. Please try again later.";
+        this.loadingWallets = false;
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -50,107 +74,115 @@ export class DepositComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Step 1: User approves funding amount
-  approveFunding() {
-    if (!this.depositAmount || this.depositAmount <= 0) {
-      this.error = "Please enter a valid deposit amount.";
-      return;
-    }
-    this.error = "";
-    this.currentStep = 2;
-    // Start the 20-minute countdown
-    this.countdown = 1200;
-    this.timeoutMessage = "";
-    this.countdownSubscription = interval(1000).subscribe(() => {
-      if (this.countdown > 0) {
-        this.countdown--;
-      } else {
-        this.timeoutMessage =
-          "Time has run out. Please reinitiate the transfer.";
-        this.countdownSubscription.unsubscribe();
-      }
-    });
-  }
-
-  // Step 2: User selects a wallet
-  selectCurrency(currency: any) {
-    // if (currency.name.toLowerCase() === "cash app") {
-    //   this.showCashAppModal = true;
-    //   return; // do not set as the selected currency
-    // }
+  // Step 1: User selects a wallet
+  selectCurrency(currency: Wallet) {
     this.selectedCurrency = currency;
+    this.showCashAppModal = true;
   }
 
   closeCashAppModal() {
     this.showCashAppModal = false;
   }
 
+  // Step 1: Continue to amount entry after selecting wallet
+  continueToAmount() {
+    if (!this.selectedCurrency) {
+      this.error = "Please select a wallet first";
+      return;
+    }
+    this.currentStep = 2;
+  }
+
+  // Step 2: Show transaction details modal
+  showTransactionDetails() {
+    this.showCashAppModal = false;
+    this.showTransactionModal = true;
+  }
+
+  closeTransactionModal() {
+    this.showTransactionModal = false;
+  }
+
+  // Step 2: User approves funding amount
+  approveFunding() {
+    if (this.depositAmount <= 0) {
+      this.error = "Please enter a valid amount";
+      return;
+    }
+
+    // Start countdown timer
+    this.currentStep = 3;
+    this.countdownSubscription = interval(1000).subscribe(() => {
+      this.countdown--;
+      if (this.countdown <= 0) {
+        this.countdownSubscription.unsubscribe();
+        this.timeoutMessage =
+          "Time expired. Please restart the funding process.";
+      }
+    });
+  }
+
   // Copies the wallet address, shows "Copied!" indicator, and selects the currency
-  copyAddress(currency: any) {
-    navigator.clipboard.writeText(currency.walletAddress).then(() => {
-      this.copiedCurrencyId = currency.id;
-      // Also select the currency upon copy
-      this.selectedCurrency = currency;
-      this.message = "Wallet address copied to clipboard!";
+  copyAddress(currency: Wallet) {
+    if (currency && currency.address) {
+      navigator.clipboard.writeText(currency.address);
+      this.copiedCurrencyId = currency._id;
       setTimeout(() => {
         this.copiedCurrencyId = null;
-        this.message = "";
-      }, 3000);
-    });
+      }, 2000);
+    }
   }
 
   // Step 2: Confirm deposit transfer
   confirmDeposit() {
+    if (!this.selectedCurrency) {
+      this.error = "Please select a currency";
+      return;
+    }
+
+    if (!this.txHash) {
+      this.error = "Please enter a transaction hash or reference ID";
+      return;
+    }
+
     this.processingDeposit = true;
-    this.investmentService.showSpinner();
-    const uid = localStorage.getItem("uid");
-    if (!uid) {
-      this.error = "User not logged in";
-      this.processingDeposit = false;
-      return;
-    }
-    if (!this.selectedCurrency || !this.depositAmount) {
-      this.error = "Please select a currency and enter an amount";
-      this.processingDeposit = false;
-      return;
-    }
-    const depositData = {
-      uid,
+    this.error = "";
+
+    const depositRequest: CreateDepositRequest = {
+      walletId: this.selectedCurrency._id,
       amount: this.depositAmount,
-      currency: this.selectedCurrency.id,
+      txHash: this.txHash
     };
-    this.investmentService.deposit(depositData).subscribe({
-      next: (res) => {
-        this.message = res.message;
-        this.error = "";
-        this.processingDeposit = false;
-        this.investmentService.hideSpinner();
-        if (this.countdownSubscription) {
-          this.countdownSubscription.unsubscribe();
+    console.log(depositRequest)
+
+    this.depositService.createDeposit(depositRequest)
+      .subscribe({
+        next: (response) => {
+          this.processingDeposit = false;
+          this.currentStep = 3;
+          this.message = "Your deposit has been submitted and is pending approval.";
+          
+          // Stop the countdown timer
+          if (this.countdownSubscription) {
+            this.countdownSubscription.unsubscribe();
+          }
+        },
+        error: (err) => {
+          this.processingDeposit = false;
+          this.error = err.error?.message || "Error processing deposit. Please try again.";
         }
-        // Move to Step 3: Success screen
-        this.currentStep = 3;
-      },
-      error: (err) => {
-        this.error = err.error.error || "Deposit failed";
-        this.processingDeposit = false;
-        this.investmentService.hideSpinner();
-      },
-    });
+      });
   }
 
   // Step 3: Restart funding process
   restartFunding() {
-    // Reset all relevant properties
     this.currentStep = 1;
     this.depositAmount = 0;
     this.selectedCurrency = null;
-    this.error = "";
     this.message = "";
+    this.error = "";
+    this.countdown = 1200; // Reset countdown to 20 minutes
     this.timeoutMessage = "";
-    if (this.countdownSubscription) {
-      this.countdownSubscription.unsubscribe();
-    }
   }
 
   // Navigate to dashboard

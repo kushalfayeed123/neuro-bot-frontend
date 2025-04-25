@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://neurobot-backend-ivory.vercel.app/api'
+  apiUrl: 'http://localhost:5000/api'
 };
 
 /*

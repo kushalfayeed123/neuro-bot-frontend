@@ -28,6 +28,8 @@ import { AdminTransactionsComponent } from './components/admin-transactions/admi
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
+import { WalletService } from './services/wallet.service';
+import { DepositService } from './services/deposit.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
@@ -64,6 +66,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     InvestmentService,
     AuthService,
     UserService,
+    WalletService,
+    DepositService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
