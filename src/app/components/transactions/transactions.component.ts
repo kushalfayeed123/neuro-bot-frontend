@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router"; // assuming use of Angular Router
 import { InvestmentService } from "src/app/investment.service";
+import { DepositService } from "src/app/services/deposit.service";
 
 @Component({
   selector: "app-transactions",
@@ -13,28 +14,20 @@ export class TransactionsComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private investmentService: InvestmentService
+    private investmentService: InvestmentService,
+    private depositService: DepositService
   ) {}
 
   ngOnInit(): void {
-    // Replace with real API/service call as needed.
-    const uid = localStorage.getItem("uid");
-    if (uid) {
-      this.fetchTransactions(uid);
-    }
+    this.fetchTransactions();
+
   }
-  convertTimestampToDate(seconds: number, nanoseconds: number): Date {
-    const milliseconds = seconds * 1000 + nanoseconds / 1000000;
-    return new Date(milliseconds);
-  }
-  fetchTransactions(userId: string): void {
-    this.investmentService.getTransactionsByUserId(userId).subscribe({
+  
+  fetchTransactions(): void {
+    this.depositService.getUserDeposits().subscribe({
       next: (response) =>
         (this.transactions = response.map((transaction: any) => {
-          const createdAtDate = this.convertTimestampToDate(
-            transaction.createdAt._seconds,
-            transaction.createdAt._nanoseconds
-          );
+          const createdAtDate = new Date(transaction.createdAt);
           return { ...transaction, createdAt: createdAtDate };
         })),
       error: () => (this.error = "Failed to load transactions"),

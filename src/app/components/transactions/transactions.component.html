@@ -1,54 +1,87 @@
 <div class="min-h-screen p-4 bg-gray-900 text-gray-100" *ngIf="transactions">
-    <div class="bg-gray-800 shadow-xl rounded-lg p-6 border border-gray-700">
-      <h3 class="text-2xl font-semibold text-[#00ff9d] mb-4">Transaction History</h3>
-      <div *ngIf="transactions.length > 0" class="space-y-4">
-        <div *ngFor="let transaction of transactions"
-             class="bg-gray-700 shadow-md rounded-lg p-6 border-l-4"
-             [ngClass]="{
-               'border-[#00ff9d]': transaction.status === 'approved',
-               'border-yellow-500': transaction.status === 'pending',
-               'border-red-500': transaction.status === 'rejected'
-             }">
-          <div class="flex justify-between items-center mb-3">
-            <h4 class="font-semibold text-gray-100">{{ transaction.type }}</h4>
-            <span class="text-sm text-gray-400">
-              {{ transaction.createdAt | date:'medium' }}
-            </span>
+  <div class="bg-gray-800 shadow-xl rounded-lg p-6 border border-gray-700">
+    <h3 class="text-2xl font-semibold text-[#00ff9d] mb-4">Transaction History</h3>
+
+    <div *ngIf="transactions.length > 0" class="space-y-6">
+      <div *ngFor="let transaction of transactions"
+           class="bg-gray-700 shadow-md rounded-lg p-6 border-l-4"
+           [ngClass]="{
+             'border-[#00ff9d]': transaction.status?.toLowerCase() === 'approved',
+             'border-yellow-500': transaction.status?.toLowerCase() === 'pending',
+             'border-red-500': transaction.status?.toLowerCase() === 'rejected'
+           }">
+        
+        <div class="flex justify-between items-center mb-4">
+          <h4 class="font-semibold text-gray-100">{{ transaction.type }}</h4>
+          <span class="text-sm text-gray-400">{{ transaction.createdAt | date:'medium' }}</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <span class="font-semibold text-gray-300">Amount:</span>
+            <p class="text-gray-100">{{ transaction.amount | currency:'USD':'symbol':'1.2-2' }}</p>
           </div>
-          <div class="flex flex-col gap-2">
-            <p>
-              <span class="font-semibold text-gray-300">Amount:</span>
-              <span class="text-gray-100">{{ transaction.amount | currency:'USD':'symbol':'1.2-2' }}</span>
-            </p>
-            <p>
-              <span class="font-semibold text-gray-300">Currency:</span>
-              <span class="text-gray-100">{{ transaction.currency }}</span>
-            </p>
+          <div>
+            <span class="font-semibold text-gray-300">Currency:</span>
+            <p class="text-gray-100">{{ transaction.currency }}</p>
           </div>
-          <div class="flex justify-between mt-2">
-            <p>
-              <span class="font-semibold text-gray-300">Status: </span>
-              <span [ngClass]="{
-                'text-[#00ff9d]': transaction.status === 'approved',
-                'text-yellow-400': transaction.status === 'pending',
-                'text-red-400': transaction.status === 'rejected'
-              }">
-                {{ transaction.status }}
-              </span>
-            </p>
+          <div>
+            <span class="font-semibold text-gray-300">Payment Method:</span>
+            <p class="text-gray-100">{{ transaction.paymentMethod }}</p>
+          </div>
+          <div *ngIf="transaction.paymentDetails?.network">
+            <span class="font-semibold text-gray-300">Network:</span>
+            <p class="text-gray-100">{{ transaction.paymentDetails.network }}</p>
+          </div>
+          <div *ngIf="transaction.paymentDetails?.address">
+            <span class="font-semibold text-gray-300">Wallet Address:</span>
+            <p class="text-gray-100 break-all">{{ transaction.paymentDetails.address }}</p>
+          </div>
+          <div *ngIf="transaction.txHash">
+            <span class="font-semibold text-gray-300">Transaction Hash:</span>
+            <p class="text-gray-100 break-all">{{ transaction.txHash }}</p>
+          </div>
+          <div *ngIf="transaction.description">
+            <span class="font-semibold text-gray-300">Description:</span>
+            <p class="text-gray-100">{{ transaction.description }}</p>
+          </div>
+          <div *ngIf="transaction.processedBy">
+            <span class="font-semibold text-gray-300">Processed By:</span>
+            <p class="text-gray-100">{{ transaction.processedBy }}</p>
+          </div>
+          <div *ngIf="transaction.processedAt">
+            <span class="font-semibold text-gray-300">Processed At:</span>
+            <p class="text-gray-100">{{ transaction.processedAt | date:'medium' }}</p>
           </div>
         </div>
-      </div>
-      <div *ngIf="transactions.length === 0"
-           class="bg-gray-700 shadow-md rounded-lg p-6 text-center">
-        <p class="text-gray-400">No transactions found.</p>
-      </div>
-      <div class="mt-6 text-center">
-        <button (click)="goBack()"
-                class="bg-gradient-to-r from-[#00ff9d] to-[#00cc7d] text-gray-900 py-3 px-8 rounded-lg shadow-lg hover:from-[#00cc7d] hover:to-[#00ff9d] transition duration-300 font-bold">
-          Back to Dashboard
-        </button>
+
+        <div class="flex justify-between mt-6">
+          <p>
+            <span class="font-semibold text-gray-300">Status: </span>
+            <span [ngClass]="{
+              'text-[#00ff9d]': transaction.status?.toLowerCase() === 'approved',
+              'text-yellow-400': transaction.status?.toLowerCase() === 'pending',
+              'text-red-400': transaction.status?.toLowerCase() === 'rejected'
+            }">
+              {{ transaction.status }}
+            </span>
+          </p>
+        </div>
+
+        
       </div>
     </div>
+
+    <div *ngIf="transactions.length === 0"
+         class="bg-gray-700 shadow-md rounded-lg p-6 text-center">
+      <p class="text-gray-400">No transactions found.</p>
+    </div>
+<!-- 
+    <div class="mt-6 text-center">
+      <button (click)="goBack()"
+              class="bg-gradient-to-r from-[#00ff9d] to-[#00cc7d] text-gray-900 py-3 px-8 rounded-lg shadow-lg hover:from-[#00cc7d] hover:to-[#00ff9d] transition duration-300 font-bold">
+        Back to Dashboard
+      </button>
+    </div> -->
   </div>
-  
+</div>
