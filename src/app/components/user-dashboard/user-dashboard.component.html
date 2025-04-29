@@ -33,13 +33,13 @@
       </div>
       <div class="flex gap-4 mt-4 md:mt-0">
         <button
-          (click)="deposit()"
+          (click)="navigateTo('/deposit')"
           class="bg-[#00ff9d] text-black font-bold py-3 px-6 rounded-lg shadow-lg hover:opacity-90 transition duration-300"
         >
           Add Funds
         </button>
         <button
-          (click)="withdraw()"
+          (click)="navigateTo('/withdraw')"
           class="bg-[#00ff9d] text-black font-bold py-3 px-6 rounded-lg shadow-lg hover:opacity-90 transition duration-300"
         >
           Withdraw Funds
@@ -61,14 +61,16 @@
       <div class="shadow-md rounded-lg p-6 bg-gray-900 text-white">
         <h4 class="text-lg font-medium uppercase">Total P&L</h4>
         <p class="text-2xl font-semibold">
-          {{ profile.wallet?.totalPnL | currency : "USD" : "symbol" : "1.2-2" }}
+          {{ profile.wallet.totalPnL | currency : "USD" : "symbol" : "1.2-2" }}
         </p>
       </div>
     </div>
 
     <!-- Portfolio Overview Section -->
     <div class="mt-8">
-      <h3 class="text-2xl font-semibold text-gray-200 mb-4">Portfolio Overview</h3>
+      <h3 class="text-2xl font-semibold text-gray-200 mb-4">
+        Portfolio Overview
+      </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Investment Distribution Chart -->
         <div class="shadow-md rounded-lg p-2 bg-gray-800">
@@ -85,9 +87,7 @@
           <h4 class="text-lg font-medium text-[#00ff9d] uppercase">
             Performance Summary
           </h4>
-          <app-performance-summary-chart
-            [data]="defaultPerformanceSummary"
-          >
+          <app-performance-summary-chart [data]="defaultPerformanceSummary">
           </app-performance-summary-chart>
         </div>
       </div>
@@ -95,7 +95,9 @@
 
     <!-- Pool Information -->
     <div class="mt-8" *ngIf="profile.pool">
-      <h3 class="text-2xl font-semibold text-gray-200 mb-4">Pool Information</h3>
+      <h3 class="text-2xl font-semibold text-gray-200 mb-4">
+        Pool Information
+      </h3>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div class="shadow-md rounded-lg p-6 bg-gray-950 text-white">
           <h4 class="text-lg font-medium uppercase">Pool Name</h4>
@@ -104,7 +106,9 @@
         <div class="shadow-md rounded-lg p-6 bg-gray-900 text-white">
           <h4 class="text-lg font-medium uppercase">Total Capital</h4>
           <p class="text-xl font-semibold">
-            {{ profile.pool.totalCapital | currency : "USD" : "symbol" : "1.2-2" }}
+            {{
+              profile.pool.totalCapital | currency : "USD" : "symbol" : "1.2-2"
+            }}
           </p>
         </div>
         <div class="shadow-md rounded-lg p-6 bg-gray-950 text-white">
@@ -117,12 +121,20 @@
 </div>
 
 <!-- Loading indicator -->
-<div *ngIf="loading" class="min-h-screen flex justify-center items-center bg-gray-900">
-  <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00ff9d]"></div>
+<div
+  *ngIf="loading"
+  class="min-h-screen flex justify-center items-center bg-gray-900"
+>
+  <div
+    class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00ff9d]"
+  ></div>
 </div>
 
 <!-- Error message -->
-<div *ngIf="error" class="min-h-screen p-4 bg-gray-900 flex justify-center items-center">
+<div
+  *ngIf="error"
+  class="min-h-screen p-4 bg-gray-900 flex justify-center items-center"
+>
   <div class="bg-red-900 text-red-200 p-4 rounded max-w-md">
     {{ error }}
   </div>

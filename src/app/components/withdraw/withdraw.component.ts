@@ -1,6 +1,9 @@
 import { Component } from "@angular/core";
 import { InvestmentService } from "src/app/investment.service";
 import { Router } from "@angular/router";
+import { Wallet, WalletService } from "src/app/services/wallet.service";
+import { TransactionService } from "src/app/services/deposit.service";
+import { CreateTransactionRequest } from "src/app/interfaces/create-transaction.interface";
 
 @Component({
   selector: "app-withdraw",
@@ -13,43 +16,45 @@ export class WithdrawComponent {
     currency: "",
     accountNumber: "",
     walletAddress: "",
+    beneficiaryWalletAddress: ""
   };
   message: string = "";
   error: string = "";
-  availableCurrencies: any[] = [];
+  availableCurrencies: Wallet[] = [];
+  
 
   // Flow control: Step 1 is the form; Step 2 is the success screen.
   currentStep: number = 1;
   processingWithdrawal: boolean = false;
+  loadingWallets: boolean = false; // true when wallets are being fetched
+
 
   constructor(
     private investmentService: InvestmentService,
+    private walletService: WalletService,
+    private transactionService: TransactionService,
     private router: Router
   ) {
-    // Fetch currencies from API then add USD manually if not present
-    // this.investmentService.getCurrencies().subscribe({
-    //   next: (data: any) => {
-    //     // Ensure USD is included
-    //     this.availableCurrencies = data;
-    //     if (!this.availableCurrencies.find((c) => c.id === "USD")) {
-    //       this.availableCurrencies.unshift({ id: "USD", name: "USD" });
-    //     }
-    //   },
-    //   error: (err) =>
-    //     (this.error = err.error.error || "Error fetching currencies"),
-    // });
+    this.walletService.getAvailableWallets().subscribe({
+      next: (wallets) => {
+        console.log("Wallets loaded:", wallets);
+        this.availableCurrencies = wallets;
+        this.loadingWallets = false;
+      },
+      error: (err) => {
+        console.error("Error loading wallets:", err);
+        this.error =
+          err.error?.message ||
+          "Error fetching wallets. Please try again later.";
+        this.loadingWallets = false;
+      },
+    });
   }
 
   submitWithdraw() {
     this.processingWithdrawal = true;
     this.investmentService.showSpinner();
-    const uid = localStorage.getItem("uid");
-    if (!uid) {
-      this.error = "User not logged in";
-      this.processingWithdrawal = false;
-      this.investmentService.hideSpinner();
-      return;
-    }
+   
     if (!this.withdrawData.currency || !this.withdrawData.amount) {
       this.error = "Please select a currency and enter an amount";
       this.processingWithdrawal = false;
@@ -72,10 +77,19 @@ export class WithdrawComponent {
         return;
       }
     }
-    const data = { uid, ...this.withdrawData };
-    this.investmentService.withdraw(data).subscribe({
+
+    var payload: CreateTransactionRequest = {
+      amount: this.withdrawData.amount,
+      type: 'WITHDRAWAL',
+      walletId: this.withdrawData.currency,
+      beneficiaryAccountNumber: '',
+      beneficiaryWalletAddress: this.withdrawData.walletAddress,
+      txHash: ''
+    
+    }
+    this.transactionService.createWithdrawalRequest(payload).subscribe({
       next: (res) => {
-        this.message = res.message;
+        this.message = 'Withdrawal request has been created and is currently being reviewed by the finance team';
         this.error = "";
         this.processingWithdrawal = false;
         this.investmentService.hideSpinner();

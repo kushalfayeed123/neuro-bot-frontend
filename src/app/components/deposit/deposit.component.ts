@@ -3,13 +3,8 @@ import { InvestmentService } from "src/app/investment.service";
 import { interval, Subscription } from "rxjs";
 import { Router } from "@angular/router";
 import { WalletService, Wallet } from "../../services/wallet.service";
-import { DepositService, CreateDepositRequest } from "../../services/deposit.service";
-
-interface DepositTransaction {
-  walletId: string;
-  amount: number;
-  txHash: string;
-}
+import { TransactionService } from "../../services/deposit.service";
+import { CreateTransactionRequest } from "src/app/interfaces/create-transaction.interface";
 
 @Component({
   selector: "app-deposit",
@@ -38,33 +33,35 @@ export class DepositComponent implements OnInit, OnDestroy {
   constructor(
     private investmentService: InvestmentService,
     private walletService: WalletService,
-    private depositService: DepositService,
+    private depositService: TransactionService,
     private router: Router
   ) {
-    console.log('Deposit component constructed');
+    console.log("Deposit component constructed");
   }
 
   ngOnInit() {
-    console.log('Deposit component initialized');
+    console.log("Deposit component initialized");
     this.loadAvailableWallets();
   }
 
   loadAvailableWallets() {
     this.loadingWallets = true;
-    this.error = '';
-    
-    console.log('Loading available wallets');
+    this.error = "";
+
+    console.log("Loading available wallets");
     this.walletService.getAvailableWallets().subscribe({
       next: (wallets) => {
-        console.log('Wallets loaded:', wallets);
+        console.log("Wallets loaded:", wallets);
         this.currencies = wallets;
         this.loadingWallets = false;
       },
       error: (err) => {
-        console.error('Error loading wallets:', err);
-        this.error = err.error?.message || "Error fetching wallets. Please try again later.";
+        console.error("Error loading wallets:", err);
+        this.error =
+          err.error?.message ||
+          "Error fetching wallets. Please try again later.";
         this.loadingWallets = false;
-      }
+      },
     });
   }
 
@@ -148,30 +145,32 @@ export class DepositComponent implements OnInit, OnDestroy {
     this.processingDeposit = true;
     this.error = "";
 
-    const depositRequest: CreateDepositRequest = {
+    const depositRequest: CreateTransactionRequest = {
       walletId: this.selectedCurrency._id,
       amount: this.depositAmount,
-      txHash: this.txHash
+      txHash: this.txHash,
+      type: "DEPOSIT",
     };
-    console.log(depositRequest)
+    console.log(depositRequest);
 
-    this.depositService.createDeposit(depositRequest)
-      .subscribe({
-        next: (response) => {
-          this.processingDeposit = false;
-          this.currentStep = 3;
-          this.message = "Your deposit has been submitted and is pending approval.";
-          
-          // Stop the countdown timer
-          if (this.countdownSubscription) {
-            this.countdownSubscription.unsubscribe();
-          }
-        },
-        error: (err) => {
-          this.processingDeposit = false;
-          this.error = err.error?.message || "Error processing deposit. Please try again.";
+    this.depositService.createDeposit(depositRequest).subscribe({
+      next: (response) => {
+        this.message =
+          "Your deposit transaction was submitted successfully. Please wait for confirmation.";
+        this.currentStep = 4;
+        this.processingDeposit = false;
+
+        // Stop the countdown timer
+        if (this.countdownSubscription) {
+          this.countdownSubscription.unsubscribe();
         }
-      });
+      },
+      error: (err) => {
+        this.processingDeposit = false;
+        this.error =
+          err.error?.message || "Error processing deposit. Please try again.";
+      },
+    });
   }
 
   // Step 3: Restart funding process

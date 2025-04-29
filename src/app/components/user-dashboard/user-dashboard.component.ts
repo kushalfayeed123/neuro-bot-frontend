@@ -3,12 +3,12 @@ import { Router } from "@angular/router";
 import { InvestmentService } from "src/app/investment.service";
 import { HttpClient } from "@angular/common/http";
 import { Color, ScaleType } from "@swimlane/ngx-charts";
-import { UserService, UserProfile } from '../../services/user.service';
+import { UserService, UserProfile } from "../../services/user.service";
 
 @Component({
   selector: "app-user-dashboard",
   templateUrl: "./user-dashboard.component.html",
-  styleUrls: ['./user-dashboard.component.css']
+  styleUrls: ["./user-dashboard.component.css"],
 })
 export class UserDashboardComponent implements OnInit {
   userData: any;
@@ -86,10 +86,10 @@ export class UserDashboardComponent implements OnInit {
     //     error: (err) =>
     //       (this.error = err.error.error || "Error loading dashboard"),
     //   });
-      // this.fetchTransactions(uid);
-      this.fetchCryptoData();
-      this.fetchStockPrices();
-      this.loadUserProfile();
+    // this.fetchTransactions(uid);
+    this.fetchCryptoData();
+    this.fetchStockPrices();
+    this.loadUserProfile();
     // }
     // this.investmentService.hideSpinner;
   }
@@ -103,10 +103,10 @@ export class UserDashboardComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error loading profile:', err);
-        this.error = 'Failed to load user profile';
+        console.error("Error loading profile:", err);
+        this.error = "Failed to load user profile";
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -217,30 +217,7 @@ export class UserDashboardComponent implements OnInit {
     this.router.navigate(["/withdraw"]);
   }
 
-  deposit(): void {
-    if (this.depositAmount <= 0) {
-      this.error = 'Please enter a valid amount';
-      return;
-    }
-    
-    // Implement deposit logic here
-    console.log('Depositing:', this.depositAmount);
-    this.error = '';
-  }
-
-  withdraw(): void {
-    if (this.withdrawAmount <= 0) {
-      this.error = 'Please enter a valid amount';
-      return;
-    }
-    
-    if (this.withdrawAmount > this.balance) {
-      this.error = 'Insufficient balance';
-      return;
-    }
-    
-    // Implement withdraw logic here
-    console.log('Withdrawing:', this.withdrawAmount);
-    this.error = '';
+  navigateTo(path: string): void {
+    this.router.navigate([path]);
   }
 }

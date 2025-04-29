@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router"; // assuming use of Angular Router
 import { InvestmentService } from "src/app/investment.service";
-import { DepositService } from "src/app/services/deposit.service";
+import { TransactionService } from "src/app/services/deposit.service";
 
 @Component({
   selector: "app-transactions",
@@ -15,14 +15,13 @@ export class TransactionsComponent implements OnInit {
   constructor(
     private router: Router,
     private investmentService: InvestmentService,
-    private depositService: DepositService
+    private depositService: TransactionService
   ) {}
 
   ngOnInit(): void {
     this.fetchTransactions();
-
   }
-  
+
   fetchTransactions(): void {
     this.depositService.getUserDeposits().subscribe({
       next: (response) =>

@@ -1,21 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { forkJoin, Observable } from "rxjs";
 import { InvestmentService } from "src/app/investment.service";
-import { DepositService, DepositTransaction } from "../../services/deposit.service";
-
-interface Transaction {
-  id: string;
-  uid: string;
-  type: "deposit" | "withdraw";
-  amount: number;
-  currency?: string;
-  status: "approved" | "pending" | "rejected";
-  createdAt: any;
-  approvedAt?: { _seconds: number; _nanoseconds: number };
-  userName?: string;
-  txHash?: string;
-  walletId?: string;
-}
+import { TransactionService } from "../../services/deposit.service";
+import { Transaction } from "src/app/interfaces/transaction.interface";
 
 @Component({
   selector: "app-admin-transactions",
@@ -24,14 +11,14 @@ interface Transaction {
 })
 export class AdminTransactionsComponent implements OnInit {
   transactions: Transaction[] = [];
-  pendingDeposits: DepositTransaction[] = [];
+  pendingDeposits: Transaction[] = [];
   activeTab: "deposit" | "withdraw" = "deposit";
   error: string = "";
   loading: boolean = false;
 
   constructor(
     private investmentService: InvestmentService,
-    private depositService: DepositService
+    private depositService: TransactionService
   ) {}
 
   ngOnInit() {
@@ -54,7 +41,7 @@ export class AdminTransactionsComponent implements OnInit {
       error: (err) => {
         this.error = "Failed to load pending deposits";
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -101,83 +88,52 @@ export class AdminTransactionsComponent implements OnInit {
   filteredTransactions() {
     if (this.activeTab === "deposit") {
       // Convert pending deposits to match Transaction interface
-      const convertedPendingDeposits = this.pendingDeposits.map(deposit => ({
+      const convertedPendingDeposits = this.pendingDeposits.map((deposit) => ({
         ...deposit,
-        type: 'deposit' as const,
-        userName: 'Unknown User', // Default value
-        currency: 'Crypto' // Default value
+        type: "deposit" as const,
+        userName: "Unknown User", // Default value
+        currency: "Crypto", // Default value
       }));
-      
-      return [...convertedPendingDeposits, ...this.transactions.filter(t => t.type === "deposit" && t.status !== "pending")];
+
+      return [
+        ...convertedPendingDeposits,
+        ...this.transactions.filter(
+          (t) => t.type === "deposit" && t.status !== "pending"
+        ),
+      ];
     }
     return this.transactions.filter((t) => t.type === this.activeTab);
   }
 
-  approveTransaction(transaction: Transaction | DepositTransaction) {
-    this.loading = true;
-    
-    // Check if it's a deposit transaction by checking for walletId
-    if ('walletId' in transaction) {
-      this.depositService.approveDeposit(transaction.id).subscribe({
-        next: () => {
-          this.loadPendingDeposits();
-          this.loadTransactions();
-        },
-        error: (err) => {
-          this.error = "Failed to approve deposit";
-          this.loading = false;
-        }
-      });
-    } else {
-      let payload = {
-        transactionId: transaction.id,
-        approved: true,
-      };
-      transaction.status = "approved";
-
-      this.investmentService.approveDeposit(payload).subscribe({
-        next: () => {
-          this.loadTransactions();
-        },
-        error: (err) => {
-          this.error = "Failed to approve transaction";
-          this.loading = false;
-        }
-      });
-    }
+  approveTransaction(transaction: Transaction) {
+    this.handleTransactionAction(transaction, "approve");
   }
 
-  denyTransaction(transaction: Transaction | DepositTransaction) {
-    this.loading = true;
-    
-    // Check if it's a deposit transaction by checking for walletId
-    if ('walletId' in transaction) {
-      this.depositService.rejectDeposit(transaction.id).subscribe({
-        next: () => {
-          this.loadPendingDeposits();
-          this.loadTransactions();
-        },
-        error: (err) => {
-          this.error = "Failed to reject deposit";
-          this.loading = false;
-        }
-      });
-    } else {
-      let payload = {
-        transactionId: transaction.id,
-        approved: false,
-      };
-      transaction.status = "rejected";
+  denyTransaction(transaction: Transaction) {
+    this.handleTransactionAction(transaction, "deny");
+  }
 
-      this.investmentService.approveDeposit(payload).subscribe({
-        next: () => {
-          this.loadTransactions();
-        },
-        error: (err) => {
-          this.error = "Failed to reject transaction";
-          this.loading = false;
-        }
-      });
-    }
+  handleTransactionAction(
+    transaction: Transaction,
+    action: "approve" | "deny"
+  ) {
+    this.loading = true;
+
+    const approved = action === "approve";
+
+    const onSuccess = () => {
+      this.loadTransactions();
+    };
+
+    const onError = () => {
+      this.error = `Failed to ${action} "transaction"}`;
+      this.loading = false;
+    };
+
+    const request = approved
+      ? this.depositService.approveDeposit(transaction.id)
+      : this.depositService.rejectDeposit(transaction.id);
+
+    request.subscribe({ next: onSuccess, error: onError });
   }
 }

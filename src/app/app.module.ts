@@ -29,7 +29,7 @@ import { ChatbotComponent } from './components/chatbot/chatbot.component';
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
 import { WalletService } from './services/wallet.service';
-import { DepositService } from './services/deposit.service';
+import { TransactionService } from './services/deposit.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
@@ -67,7 +67,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     AuthService,
     UserService,
     WalletService,
-    DepositService,
+    TransactionService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
